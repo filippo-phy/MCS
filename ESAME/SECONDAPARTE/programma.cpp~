@@ -1,0 +1,157 @@
+#include <TApplication.h>
+#include <iostream>
+#include <fstream>
+#include <TAxis.h>
+#include <TGraphErrors.h>
+#include <TF1.h>
+#include <string>
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+double Resistenza(vector<double> V, vector<double> I){
+
+  double R;
+  double somma=0;
+
+  for (int i=0; i<V.size(); i++){
+    R=V[i]/I[i];
+    somma += R;
+  }
+
+  return somma/V.size();
+}
+
+double Temperatura(double R0, double V, double I){
+  double alfa = 4.82e-3;
+  double beta = 6.67e-7;
+  double R = V/I;
+
+  double T = 273 + (1/(2*beta))*(sqrt(pow(alfa, 2) + 4*beta*((R/R0) -1)) - alfa);
+
+  return T;
+}
+
+  
+
+int main() {
+   /* ATTENZIONE: l'istruzione che segue serve per far funzionare i grafici
+    *             di ROOT e deve essere la prima istruzione del programma.
+    *             Non aggiungete codice prima di questa istruzione
+    */
+   TApplication app("app", 0, 0);
+
+   string File_Name;
+   cout << "inserire il nome del file di input: " << flush;
+   cin >> File_Name; //assegnazione da tastiera del nome di un file alla stringa.
+
+   ifstream ifile(File_Name);
+
+   if (! ifile.good()){
+     cerr << "errore nella lettura del file '" << File_Name << "'" << endl;
+     return 1;
+   }
+
+   vector<double> Corrente, Tensione;
+   double V, I, eI, eV;
+   double R0;
+
+   while (ifile >> I >> V >> eI >> eV){
+     Corrente.push_back(I);
+     Tensione.push_back(V);
+   }
+
+   if (Tensione.size()!= Corrente.size()){
+     cerr << "errore nella lettura dei dati: ad ogni tensione non corrisponde una corrente" << endl;
+     return 1;
+   }
+     
+   R0 = Resistenza(Tensione, Corrente);
+
+   ifstream file("resistenza_highV.dat");
+
+   if (! file.good()){
+     cerr << "errore nella lettura del file 'resistenza_highV.dat'" << endl;
+     return 1;
+   }
+
+   TGraphErrors graph;
+   
+   double V_h, I_h, eI_h, eV_h;
+   int i=0;
+
+   while (file >> I_h >> V_h >> eI_h >> eV_h){
+     double T = Temperatura(R0, V_h, I_h);
+     double P = V_h*I_h;
+     double eP = I_h*eV_h + V_h*eI_h;
+
+     graph.SetPoint(i, T, P);
+     graph.SetPointError(i, 1, eP);
+     i++;
+   }
+
+   graph.GetXaxis()->SetTitle("Temperatura (K)");
+   graph.GetYaxis()->SetTitle("Potenza (W)");
+   graph.SetMarkerStyle(8);
+   graph.Draw("ap");
+
+   TF1 f("f", "[0]*(pow(x, [1]) - pow(293, [1]))");
+   f.SetParameter(0, 0.5*5.67e-8);
+   f.SetParameter(1, 4);
+
+   graph.Fit("f");
+
+   double p0 = f.GetParameter(0);
+   double e_p0 = f.GetParError(0);
+   double p1 = f.GetParameter(1);
+   double e_p1 = f.GetParError(1);
+   double NDF = f.GetNDF();
+   double Chi2 = f.GetChisquare();
+   double prob_Chi2 = f.GetProb();
+
+   int opzione;
+
+   cout << endl;
+   cout << "====================" << endl;
+   cout <<"Digitare 1 se si vuole che i valori del fit siano stampati su schermo, altrimenti digitare 0: " << flush;
+   cin >> opzione;
+
+   if(opzione == 1){
+     cout << endl;
+     cout << "a = " << p0 << " +/- " << e_p0 <<endl;
+     cout << "n = " << p1 << " +/- " << e_p1 << endl;
+     cout << "Chi^2 = " << Chi2 << endl;
+     cout << "probabilità del Chi^2 = " << prob_Chi2 << endl;
+     cout << "NDF = " << NDF << endl;
+   }
+
+
+   else if(opzione == 0){
+
+       string Nome_File;
+       cout << "inserire il nome del file di output: " << flush;
+       cin >> Nome_File;
+
+       ofstream ofile(Nome_File);
+       ofile << "a = " << p0 << " +/- " << e_p0 <<endl;
+       ofile << "n = " << p1 << " +/- " << e_p1 << endl;
+       ofile << "Chi^2 = " << Chi2 << endl;
+       ofile << "probabilità del Chi^2 = " << prob_Chi2 << endl;
+       ofile << "NDF = " << NDF << endl;
+
+       ofile.close();
+     }
+
+   else {
+     cerr << "numero inserito non valido: digitare 1 o 0" << endl;
+   }
+   
+   
+   /* ATTENZIONE: l'istruzione che segue serve per far funzionare i grafici
+    *             di ROOT e deve essere l'ultima istruzione del programma.
+    *             Non aggiungete codice dopo questa istruzione
+    */
+   app.Run();
+   return 0;
+}

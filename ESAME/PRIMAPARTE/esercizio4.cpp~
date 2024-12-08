@@ -1,0 +1,9 @@
+int b, h;
+
+cout << "inserire la base e l'altezza del rettangolo: " << endl;
+cin>>b;
+cin >> h;
+cout << endl;
+for (int i=0; i<=b ; i++){
+  cout << "*" << flush;
+ }

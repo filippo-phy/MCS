@@ -1,0 +1,9 @@
+a) tipo int
+perchè il numero di abitanti di Londra è un numero intero di dimensioni che il tipo int riesce a contenere;
+
+b) tipo bool
+perchè il l'esito del lancio di una moneta può essere "testa" o "croce", che si possono esprimere come "true" o false", i possibili valori di una
+variabile di tipo bool
+
+c)tipo double
+perchè l'accelerazione può essere un numero decimale.
