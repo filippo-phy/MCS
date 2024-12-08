@@ -1,0 +1,10 @@
+void fit_binned(){
+  ifstream file("dati.dat");
+  double x;
+  TH1D *h=new TH1D("h", "titolo", 100, 0, 0);//isto dinamico
+  while(file>>x){//riempo l'istogramma
+    h->Fill(x);
+  }
+
+  h->Draw();
+}
