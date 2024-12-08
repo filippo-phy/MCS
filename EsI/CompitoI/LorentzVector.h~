@@ -1,0 +1,30 @@
+#ifndef _LORENTZVECTOR
+#define _LORENTZVECTOR
+#endif
+#include "Vector3.h"
+
+class LorentzVector: public Vector3{
+ public:
+  using Vector3::Vector3;
+  LorentzVector(double tempo=0, double x=0, double y=0, double z=0):m_t(tempo), Vector3(x, y, z){};
+  LorentzVector(double tempo, Vector3 v):m_t(tempo), Vector3(v){};
+
+  double T(); //getter variabile tempo
+  void T(double); //setter variabile tempo
+
+  double LorentzMod();
+
+  LorentzVector operator+(LorentzVector v);
+  LorentzVector operator-();
+  LorentzVector operator-(LorentzVector v);
+  LorentzVector operator*(double alpha);
+  double operator*(LorentzVector v);
+ 
+ private:
+  double m_t;
+};
+
+LorentzVector operator*(double alpha, LorentzVector v);
+std::ostream& operator<<(std::ostream& output, LorentzVector v);
+std::istream& operator>>(std::istream& input, LorentzVector& v);
+  

@@ -1,0 +1,19 @@
+import ROOT
+import math
+
+c1=ROOT.TCanvas()
+c1.Draw()
+fun1=ROOT.TF1('f', 'sin(x)/x', -10*math.pi, 10*math.pi)
+fun1.Draw()
+
+c2=ROOT.TCanvas()
+c2.Draw()
+fun2=ROOT.TF1('g', 'TMath::Gaus(x,0,1)', -3, 3)
+fun2.Draw()
+
+ROOT.gApplication.Run()
+
+
+
+
+

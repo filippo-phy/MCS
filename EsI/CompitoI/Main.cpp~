@@ -1,0 +1,25 @@
+#include <iostream>
+#include "LorentzVector.h"
+
+int main(){
+  Vector3 V(3, 4, 6);
+  LorentzVector A(1, V);
+  LorentzVector B(1, 1, 1);
+  LorentzVector C=A*3;
+  LorentzVector D;
+  LorentzVector E=3*A;
+  LorentzVector F=A-B;
+
+  std::cout<< "A = " << A.T() << " " << V << std::endl;
+  std::cout<<"A = " << A <<std::endl;
+  std::cout<<"inserire le coordinate del quadrivettore D " <<std::endl;
+  std::cin>>D;
+  std::cout<<"D = " << D <<std::endl;
+  std::cout<<"B = " << B.T() << " " << B.X() << " " << B.Y() <<  " " << B.Z() << std::endl;
+  std::cout<<"C = A*3 = " << C.T() << " " << C.X() << " " << C.Y() <<  " " << C.Z() << std::endl;
+  std::cout<<"E = 3A =  " << E <<std::endl;
+  std::cout<<"F = A-B = " << F <<std::endl;
+  std::cout<<"||B|| = "<< B*B << std::endl; 
+  std::cout<<"||A|| = " << A.LorentzMod() << std::endl;
+  return 0;
+}

@@ -1,0 +1,64 @@
+#include "LorentzVector.h"
+#include <cmath>
+
+double LorentzVector::T(){
+  return m_t;
+}
+
+void LorentzVector::T(double t){
+  m_t=t;
+}
+
+LorentzVector LorentzVector::operator+(LorentzVector vec){
+  LorentzVector sum(m_t+vec.T(), vec.X()+(*this).X(), vec.Y()+(*this).Y(), vec.Z()+(*this).Z());
+  return sum;
+}
+
+LorentzVector LorentzVector::operator-(){
+  LorentzVector res(-m_t, -(*this).X(), -(*this).Y(), -(*this).Z());
+  return res;
+}
+
+LorentzVector LorentzVector::operator-(LorentzVector v){
+  return (*this)+(-v);
+}
+  
+LorentzVector LorentzVector::operator*(double alpha){
+  LorentzVector res(m_t*alpha, alpha*(*this).X(), alpha*(*this).Y(), alpha*(*this).Z());
+  return res;
+}
+
+LorentzVector operator*(double alpha, LorentzVector v){
+  return v*alpha;
+}
+
+double LorentzVector::operator*(LorentzVector v){
+  double res = ((*this).T())*v.T()-(*this)*v;
+  return res;
+}  
+
+double LorentzVector::LorentzMod(){
+  double mod=sqrt((*this)*(*this));
+  return mod;
+}
+
+std::ostream& operator<<(std::ostream& output, LorentzVector v){
+  output << "(" << v.T() << "," << v.X() << "," << v.Y() << "," << v.Z() << ")";
+  return output;
+}
+
+std::istream& operator>>(std::istream& input, LorentzVector& v){
+  double t,x,y,z;
+  input >> t >> x >> y >> z;
+  v.T(t); v.X(x); v.Y(y); v.Z(z);
+  return input;
+}
+
+
+
+
+  
+  
+  
+
+  
